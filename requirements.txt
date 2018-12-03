@@ -1,0 +1,3 @@
+GoogleAppEngineCloudStorageClient
+google-cloud-bigquery
+unidecode
