@@ -18,7 +18,7 @@ limitations under the License.
 
 ### Introduction
 
-This AppEngine sample application is desgined to process your Waze CCP JSON Feed into; BigQuery GIS  tables for analysis, Google Cloud Storage as GeoJSON for use in desktop or web GIS applications,  and, optionally into [Carto](https://carto.com/) for advanced spatial visualization. 
+This AppEngine sample application is designed to process your Waze CCP JSON Feed into; BigQuery GIS  tables for analysis, Google Cloud Storage as GeoJSON for use in desktop or web GIS applications,  and, optionally into [Carto](https://carto.com/) for advanced spatial visualization. 
 
 Join the [Group](https://groups.google.com/d/forum/waze-ccp-gcp) for updates and discussion
 
@@ -60,7 +60,7 @@ From here on out, we'll refer to your Bucket as **{gcsPath}**
 ###### 1.Clone The Source Code from the CE / PSO Repo: 
 ```gcloud source repos clone waze-ccp-gcp --project=cloud-ce-pso-shared-code ```
 ###### 2. Update Variables Source Code: 
-First, genereate a [GUID](https://www.guidgenerator.com/). This will be referred to as **{guid}** and its just a way to create a non-guessable URL for the handler that Cron will call to update the Waze data every 10 minutes. 
+First, generate a [GUID](https://www.guidgenerator.com/). This will be referred to as **{guid}** and its just a way to create a non-guessable URL for the handler that Cron will call to update the Waze data every 10 minutes. 
 
 - In app.yaml 
   - Line 1: Change **{project-name}** to your **{project-name}**
