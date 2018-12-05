@@ -36,6 +36,7 @@ Join the [Group](https://groups.google.com/d/forum/waze-ccp-gcp) for updates and
 <p align="center">
   <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/1.png" width="600px"/>
 </p>
+
 From here on out, we'll refer to your Project ID as **{project-id}** and Project Name as **{project-name}**
 
 ##### Step 2: Configure BigQuery
@@ -51,6 +52,7 @@ From here on out, we'll refer to your Project ID as **{project-id}** and Project
 <p align="center">
   <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/3.png" width="600px"/>
 </p>
+
 From here on out, we'll refer to your Dataset as **{bqDataset}**
 
 <p align="center">
@@ -62,6 +64,7 @@ From here on out, we'll refer to your Dataset as **{bqDataset}**
 <p align="center">
   <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/5.png" width="600px"/>
 </p>
+
 From here on out, we'll refer to your Bucket as **{gcsPath}**
 
 ##### Step 4. Download source code, Install Dependencies, and Update Variables to Match your Project.
