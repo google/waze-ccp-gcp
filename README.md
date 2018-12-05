@@ -125,4 +125,4 @@ These tables will contain all the **unique** elements from your **{waze-url}**
 ###### Data Studio:
 Once you have a few days worth of data, you can start experimenting with building Data Studio dashboards.
 ![Step7a](https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/6.png)
-If you some up with something interesting, be sure to share with the group: <waze-ccp-on-gcp@googlegroups.com>
+If you come up with something interesting, be sure to share with the group: <waze-ccp-on-gcp@googlegroups.com>
