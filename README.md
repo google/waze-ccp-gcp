@@ -32,28 +32,35 @@ Join the [Group](https://groups.google.com/d/forum/waze-ccp-gcp) for updates and
 
 ##### Step 1: Create and Configure your Project
 
-![Step1](https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/1.png)
 
+<p align="center">
+  <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/1.png" width="600px"/>
+</p>
 From here on out, we'll refer to your Project ID as **{project-id}** and Project Name as **{project-name}**
 
 ##### Step 2: Configure BigQuery
 
 ###### 1. Enable the BigQuery API
 
-![Step2](https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/2.png)
+<p align="center">
+  <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/2.png" width="600px"/>
+</p>
 
 ###### 2. Go to BigQuery UI and Create a Dataset
 
-![Step2](https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/3.png)
-
+<p align="center">
+  <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/3.png" width="600px"/>
+</p>
 From here on out, we'll refer to your Dataset as **{bqDataset}**
 
-![Step2b](https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/4.png)
-
+<p align="center">
+  <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/4.png" width="600px"/>
+</p>
 ##### Step 3. Go to Cloud Storage UI and Create a Bucket
 
-![Step3](https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/5.png)
-
+<p align="center">
+  <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/5.png" width="600px"/>
+</p>
 From here on out, we'll refer to your Bucket as **{gcsPath}**
 
 ##### Step 4. Download source code, Install Dependencies, and Update Variables to Match your Project.
@@ -89,8 +96,9 @@ The special file "appengine_config.py" uses the Vendor library to include any de
 ###### 2. Using gcloud, Switch Project to your New Project:
 ``` gcloud app create ```
 
-![Step5](https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/9.png)
-
+<p align="center">
+  <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/9.png" width="600px"/>
+</p>
 ###### 3. Using gcloud, Deploy your Application:
 
 ```gcloud app deploy {your-app-folder}/app.yaml```
@@ -100,12 +108,14 @@ Even though you generated a GUID to serve as the URL path that AppEngine's Cron 
 
 When you go to IAP settings for your project, you'll first have to set up a Credentials Screen (Oath2). 
 Set the Application Type to "Internal".
-![Step5b](https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/7.png)
-
+<p align="center">
+  <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/7.png" width="600px"/>
+</p>
 Then, under IAP - turn the IAP on for the AppEngine app: 
 
-![Step5c](https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/8.png)
-
+<p align="center">
+  <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/8.png" width="600px"/>
+</p>
 You can verify that IAP is working by visiting https://{project-name}.appspot.com in an Incognito browser. You should be redircted to your OAuth2 Credentials Screen, which shows that the IAP is working and protecting the entire application. 
 
 ##### Step 6. Creeate your New Case Study
@@ -113,16 +123,20 @@ You can verify that IAP is working by visiting https://{project-name}.appspot.co
 Simply visit https://{project-name}.appspot.com/newCase/?name={your-case-name} 
 You should just see a blank page rendered, and no 500 errors if everything worked correctly. 
 To confirm the Case Study was crated, you can visit Datastore and confirm the Entity you expect to see is there. 
-![Step6](https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/10.png)
-
+<p align="center">
+  <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/10.png" width="600px"/>
+</p>
 Within 10 minutes, the Cron job described in cron.yaml will call https://{project-name}.appspot.com/{guid}/ and will start populating the tables in BigQuery. *Note - the cron function of AppEngine is internal so it is automatically inscope for IAP purposes. 
 ##### Step 7. Investigating the Waze Data
 ###### BigQuery:
 In BigQuery, you should see the three tables (alerts, jams, irregularities) under your **{bqDataset}**
-![Step7a](https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/11.png)
-These tables will contain all the **unique** elements from your **{waze-url}**
-![Step7a](https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/12.png)
-###### Data Studio:
+<p align="center">
+  <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/11.png" width="600px"/>
+</p>These tables will contain all the **unique** elements from your **{waze-url}**
+<p align="center">
+  <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/12.png" width="600px"/>
+</p>###### Data Studio:
 Once you have a few days worth of data, you can start experimenting with building Data Studio dashboards.
-![Step7a](https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/6.png)
-If you come up with something interesting, be sure to share with the group: <waze-ccp-on-gcp@googlegroups.com>
+<p align="center">
+  <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/6.png" width="600px"/>
+</p>If you come up with something interesting, be sure to share with the group: <waze-ccp-on-gcp@googlegroups.com>
