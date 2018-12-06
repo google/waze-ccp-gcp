@@ -74,15 +74,15 @@ From here on out, we'll refer to your Bucket as **{gcsPath}**
 First, generate a [GUID](https://www.guidgenerator.com/). This will be referred to as **{guid}** and its just a way to create a non-guessable URL for the handler that Cron will call to update the Waze data every 10 minutes. 
 
 - In app.yaml 
-  - Line 1: Change **{project-name}** to your **{project-name}**
-  - Line 23: Change **{guid}** to your **{guid}** 
+  - Line 15: Change **{project-name}** to your **{project-name}**
+  - Line 37: Change **{guid}** to your **{guid}** 
 - In cron.yaml 
-  - Line 3: Change **{guid}** to your **{guid}**
+  - Line 17: Change **{guid}** to your **{guid}**
 - In main.py
-  - Line 15: Change **{waze-url}** to your Waze CCP URL
-  - Line 24: Change **{gcsPath}** to your **{gcsPath}** 
-  - Line 27: Change **{bqDataset}** to your **{bqDataset}**
-  -  Line 859: Change **{guid}** to your **{guid}**
+  - Line 29: Change **{waze-url}** to your Waze CCP URL
+  - Line 38: Change **{gcsPath}** to your **{gcsPath}** 
+  - Line 41: Change **{bqDataset}** to your **{bqDataset}**
+  -  Line 873: Change **{guid}** to your **{guid}**
 
 ###### 3. Install Dependencies to /lib folder: 
 This application utilizes Google-provided Python libraries that are not part of AppEngine Standard, but are easily installed using the vendor library method. Becaue these libraries update frequently and themselves install additional dependencies, you will use the requirements.txt file provided and pip to install them. 
@@ -142,7 +142,9 @@ Within 10 minutes, the Cron job described in cron.yaml will call https://{projec
 In BigQuery, you should see the three tables (alerts, jams, irregularities) under your **{bqDataset}**
 <p align="center">
   <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/11.png" width="600px"/>
-</p>These tables will contain all the **unique** elements from your **{waze-url}**
+</p>
+
+These tables will contain all the **unique** elements from your **{waze-url}**
 <p align="center">
   <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/12.png" width="800px"/>
 </p>
