@@ -74,7 +74,6 @@ From here on out, we'll refer to your Bucket as **{gcsPath}**
 First, generate a [GUID](https://www.guidgenerator.com/). This will be referred to as **{guid}** and its just a way to create a non-guessable URL for the handler that Cron will call to update the Waze data every 10 minutes. 
 
 - In app.yaml 
-  - Line 15: Change **{project-name}** to your **{project-name}**
   - Line 37: Change **{guid}** to your **{guid}** 
 - In cron.yaml 
   - Line 17: Change **{guid}** to your **{guid}**
@@ -97,7 +96,7 @@ The special file "appengine_config.py" uses the Vendor library to include any de
 
 
 ###### 1. Using gcloud, Switch Project to your New Project:
-``` gcloud config set project {project-name} ```
+``` gcloud config set project {project-id} ```
 ###### 2. Using gcloud, Switch Project to your New Project:
 ``` gcloud app create ```
 
@@ -125,17 +124,21 @@ Then, under IAP - turn the IAP on for the AppEngine app:
   <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/8.png" width="600px"/>
 </p>
 
-You can verify that IAP is working by visiting https://{project-name}.appspot.com in an Incognito browser. You should be redircted to your OAuth2 Credentials Screen, which shows that the IAP is working and protecting the entire application. 
+You can verify that IAP is working by visiting https://{project-id}.appspot.com in an Incognito browser. You should be redircted to your OAuth2 Credentials Screen, which shows that the IAP is working and protecting the entire application. 
 
-##### Step 6. Creeate your New Case Study
+##### Step 6. Create your New Case Study
 
-Simply visit https://{project-name}.appspot.com/newCase/?name={your-case-name} 
+Simply visit https://{project-id}.appspot.com/newCase/?name={your-case-name} 
 You should just see a blank page rendered, and no 500 errors if everything worked correctly. 
-To confirm the Case Study was crated, you can visit Datastore and confirm the Entity you expect to see is there. 
+To confirm the Case Study was created, you can visit Datastore and confirm the Entity you expect to see is there. 
 <p align="center">
   <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/10.png" width="8600px"/>
 </p>
-Within 10 minutes, the Cron job described in cron.yaml will call https://{project-name}.appspot.com/{guid}/ and will start populating the tables in BigQuery. *Note - the cron function of AppEngine is internal so it is automatically inscope for IAP purposes. 
+
+Start the cron job:
+```gcloud app deploy {your-app-folder}/cron.yaml```
+
+Within 10 minutes, the Cron job described in cron.yaml will call https://{project-id}.appspot.com/{guid}/ and will start populating the tables in BigQuery. *Note - the cron function of AppEngine is internal so it is automatically inscope for IAP purposes. 
 
 ##### Step 7. Investigating the Waze Data
 ###### BigQuery:
