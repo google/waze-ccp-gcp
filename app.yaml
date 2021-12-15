@@ -32,7 +32,7 @@ handlers:
   script: main.app
   secure: always
 
-- url: /{guid}/
+- url: /3ee3bbba-ccd4-4684-b211-19500c0ab25b/
   script: main.app
   secure: always
 
