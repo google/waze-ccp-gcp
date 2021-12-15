@@ -12,14 +12,10 @@
 #See the License for the specific language governing permissions and
 # under the License.
 
-runtime: python27
-api_version: 1
-threadsafe: yes
+runtime: python39
 instance_class: F4
 
-libraries:
-- name: ssl
-  version: latest
+app_engine_apis: true
 
 default_expiration: "1s"
 
@@ -29,12 +25,9 @@ env_variables:
 handlers:
 
 - url: /newCase/
-  script: main.app
+  script: auto
   secure: always
 
 - url: /3ee3bbba-ccd4-4684-b211-19500c0ab25b/
-  script: main.app
+  script: auto
   secure: always
-
-builtins:
-- deferred: on

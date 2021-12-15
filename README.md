@@ -88,9 +88,7 @@ This application utilizes Google-provided Python libraries that are not part of 
 
 From the terminal, change directories to where you cloned the source code. 
 ``` cd {your-app-folder} ```
-Next, use pip to install the required libraries to the /lib folder. 
-``` pip install -r requirements.txt -t lib/ ```
-The special file "appengine_config.py" uses the Vendor library to include any dependencies located in the /lib folder.
+
 
 ##### Step 5. Deploy your Application to AppEngine
 
