@@ -13,21 +13,12 @@
 # under the License.
 
 runtime: python39
-instance_class: F4
 
 app_engine_apis: true
 
-default_expiration: "1s"
+entrypoint: gunicorn -b :$PORT main:app
 
-env_variables:
-    GAE_USE_SOCKETS_HTTPLIB : 'true'
+default_expiration: "300s"
 
-handlers:
-
-- url: /newCase/
-  script: auto
-  secure: always
-
-- url: /3ee3bbba-ccd4-4684-b211-19500c0ab25b/
-  script: auto
-  secure: always
+inbound_services:
+- warmup

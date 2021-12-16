@@ -13,17 +13,20 @@ See the License for the specific language governing permissions and
 limitations under the License.'''
 
 import json
-import webapp2
+from flask import Flask, request
 import datetime
 import logging
+import google.appengine.api 
 from google.appengine.api import urlfetch
 import urllib
 import uuid
 from google.appengine.ext import ndb
-from google.appengine.ext import deferred
-import cloudstorage as gcs
+from google.cloud import storage
 from google.cloud import bigquery
 import unidecode
+
+app = Flask(__name__)
+app.wsgi_app = google.appengine.api.wrap_wsgi_app(app.wsgi_app)
 
 # Your Waze CCP URL
 wazeURL= 'https://na-georss.waze.com/rtserver/web/TGeoRSS?tk=ccp_partner&ccp_partner_name=GCCT&format=JSON&types=traffic,alerts,irregularities&polygon=-83.81218750617673,36.614149187960024;-78.23113281867673,39.739665809530905;-74.97917969367673,38.04673866241326;-75.63835938117673,36.43757964751592;-83.81218750617673,36.614149187960024'
@@ -34,11 +37,13 @@ cartoAPIKey = '{your-carto-api-key}'
 """
 
 #GCS Params
-writeRetryParams = gcs.RetryParams(backoff_factor=1.1)
-gcsPath = '/waze_dmv_2/'
+bucket_name = 'waze_dmv_6'
+gcs = storage.Client()
+BUCKET = gcs.get_bucket(bucket_name)
+gcsPath = '/'+ bucket_name +'/'
 
 #BigQuery Params
-bqDataset = 'waze_dmv_2'
+bqDataset = 'waze_dmv_6'
 
 #BigQuery Schemas for the three tables that need to be recreated.
 #These are also referenced with each write.
@@ -222,45 +227,45 @@ class uniqueIrregularities(ndb.Model):
 #Called ONCE as: {your-app}.appspot.com/newCase/?name={your-case-name}
 #This handler can be disabled after you create your first case if you
 #only intend to create one.
-class newCase(webapp2.RequestHandler):
-	def get(self):
-		uid = uuid.uuid4()
-		name = self.request.get("name")
-		day = datetime.datetime.now().strftime("%Y-%m-%d")
-		if not name:
-			name = ""
+@app.route("/newCase/", methods=['GET'])
+def newCase():
+	uid = uuid.uuid4()
+	name = request.args.get("name")
+	day = datetime.datetime.now().strftime("%Y-%m-%d")
+	if not name:
+		name = ""
 
- 		#Write the new Case details to Datastore
- 		wazePut = caseModel(uid=str(uid),day=day,name=name)
- 		wazeKey = wazePut.put()
+	#Write the new Case details to Datastore
+	wazePut = caseModel(uid=str(uid),day=day,name=name)
+	wazeKey = wazePut.put()
 
- 		#Create the BigQuery Client
- 		client = bigquery.Client()
- 		datasetRef = client.dataset(bqDataset)
- 		tableSuffix = str(uid).replace('-','_')
+	#Create the BigQuery Client
+	client = bigquery.Client()
+	datasetRef = client.dataset(bqDataset)
+	tableSuffix = str(uid).replace('-','_')
 
- 		#Create the Jams Table
- 		jamsTable = 'jams_' + tableSuffix
- 		tableRef = datasetRef.table(jamsTable)
- 		table = bigquery.Table(tableRef,schema=jamsSchema)
- 		table = client.create_table(table)
- 		assert table.table_id == jamsTable
-
-
- 		#Create the Alerts Table
- 		alertsTable = 'alerts_' + tableSuffix
- 		tableRef = datasetRef.table(alertsTable)
- 		table = bigquery.Table(tableRef,schema=alertsSchema)
- 		table = client.create_table(table)
- 		assert table.table_id == alertsTable
+	#Create the Jams Table
+	jamsTable = 'jams_' + tableSuffix
+	tableRef = datasetRef.table(jamsTable)
+	table = bigquery.Table(tableRef,schema=jamsSchema)
+	table = client.create_table(table)
+	assert table.table_id == jamsTable
 
 
- 		#Create the Irregularities Table
- 		irregularitiesTable = 'irregularities_' + tableSuffix
- 		tableRef = datasetRef.table(irregularitiesTable)
- 		table = bigquery.Table(tableRef,schema=irregularitiesSchema)
- 		table = client.create_table(table)
- 		assert table.table_id == irregularitiesTable
+	#Create the Alerts Table
+	alertsTable = 'alerts_' + tableSuffix
+	tableRef = datasetRef.table(alertsTable)
+	table = bigquery.Table(tableRef,schema=alertsSchema)
+	table = client.create_table(table)
+	assert table.table_id == alertsTable
+
+
+	#Create the Irregularities Table
+	irregularitiesTable = 'irregularities_' + tableSuffix
+	tableRef = datasetRef.table(irregularitiesTable)
+	table = bigquery.Table(tableRef,schema=irregularitiesSchema)
+	table = client.create_table(table)
+	assert table.table_id == irregularitiesTable
 
 """ **** Remove this line and the quotes here and at the bottom of this block to also register the Case Study to Carto using CartoSQL ***
 
@@ -328,11 +333,12 @@ class newCase(webapp2.RequestHandler):
 
 #Called at your set cron interval, this function loops through all the cases in datastore
 #And adds a task to update the case's tables in Taskqeue
-class updateCaseStudies(webapp2.RequestHandler):
-	def get(self):
-		caseStudies = caseModel.query()
-		for case in caseStudies:
-			result = deferred.defer(updateCase,case)
+@app.route('/3ee3bbba-ccd4-4684-b211-19500c0ab25b/', methods=['GET'])
+def updateCaseStudies():
+	caseStudies = caseModel.query()
+	for case in caseStudies:
+		updateCase(case)
+	return 'OK'
 
 #For each Case, update each table
 def updateCase(case):
@@ -454,12 +460,12 @@ def processAlerts(alerts,uid,day):
 
 				#Add uuid to Datastore
 				alertPut = uniqueAlerts(tableUUID=str(uid), alertsUUID=str(uuid))
-	 			alertKey = alertPut.put()
+				alertKey = alertPut.put()
 
  	#Write GeoJSONs to GCS
 	alertGeoJSON = json.dumps({"type": "FeatureCollection", "features": features})
-	writeGeoJSON(alertGeoJSON,gcsPath  + uid + '/' + uid + '-alerts.geojson')
-	writeGeoJSON(alertGeoJSON,gcsPath  + uid + '/' + uid + '-' + now +'-alerts.geojson')
+	writeGeoJSON(alertGeoJSON, uid + '/' + uid + '-alerts.geojson')
+	writeGeoJSON(alertGeoJSON, uid + '/' + uid + '-' + now +'-alerts.geojson')
 
 	alertsTable = 'alerts_' + str(uid).replace('-','_')
 	#Stream new Rows to BigQuery
@@ -472,7 +478,7 @@ def processAlerts(alerts,uid,day):
 		try:
 			assert errors == []
 			logging.info(errors)
-		except AssertionError, e:
+		except AssertionError as e:
 			logging.warning(e)
 	""" **** Remove this line and the quotes here and at the bottom of this block to also use Carto ***
 	# Load Rows to Carto
@@ -613,10 +619,10 @@ def processJams(jams,uid,day):
 
 				#Add uuid to Datastore
 				jamPut = uniqueJams(tableUUID=str(uid), jamsUUID=str(uuid))
-	 			jamKey = jamPut.put()
+				jamKey = jamPut.put()
 	jamsGeoJSON = json.dumps({"type": "FeatureCollection", "features": features})
-	writeGeoJSON(jamsGeoJSON,gcsPath  + uid + '/' + uid + '-jams.geojson')
-	writeGeoJSON(jamsGeoJSON,gcsPath  + uid + '/' + uid + '-' + now +'-jams.geojson')
+	writeGeoJSON(jamsGeoJSON, uid + '/' + uid + '-jams.geojson')
+	writeGeoJSON(jamsGeoJSON, uid + '/' + uid + '-' + now +'-jams.geojson')
 
 	#Stream new Rows to BigQuery
 	if bqRows:
@@ -629,7 +635,7 @@ def processJams(jams,uid,day):
 		try:
 			assert errors == []
 			logging.info(errors)
-		except AssertionError, e:
+		except AssertionError as e:
 			logging.warning(e)
 	""" **** Remove this line and the quotes here and at the bottom of this block to also use Carto ***
 	# Load Rows to Carto
@@ -805,10 +811,10 @@ def processIrregularities(irregularities,uid,day):
 
 				#Add uuid to Datastore
 				irregularityPut = uniqueIrregularities(tableUUID=str(uid), irregularitiesUUID=str(iD)+str(updateDateMS))
-	 			irregularityKey = irregularityPut.put()
+				irregularityKey = irregularityPut.put()
 	irregularitiesGeoJSON = json.dumps({"type": "FeatureCollection", "features": features})
-	writeGeoJSON(irregularitiesGeoJSON,gcsPath  + uid + '/' + uid + '-irregularities.geojson')
-	writeGeoJSON(irregularitiesGeoJSON,gcsPath  + uid + '/' + uid + '-' + now +'-irregularities.geojson')
+	writeGeoJSON(irregularitiesGeoJSON, uid + '/' + uid + '-irregularities.geojson')
+	writeGeoJSON(irregularitiesGeoJSON, uid + '/' + uid + '-' + now +'-irregularities.geojson')
 	# logging.info(irregularitiesGeoJSON)
 
 	#Stream new Rows to BigQuery
@@ -822,7 +828,7 @@ def processIrregularities(irregularities,uid,day):
 		try:
 			assert errors == []
 			logging.info(errors)
-		except AssertionError, e:
+		except AssertionError as e:
 			logging.warning(e)
 
 	""" **** Remove this line and the quotes here and at the bottom of this block to also use Carto ***
@@ -851,24 +857,19 @@ def processIrregularities(irregularities,uid,day):
 	"""
 #Write the GeoJSON to GCS
 def writeGeoJSON(geoJSON,filename):
-	gcs_file = gcs.open(filename,
-	'w',
-	content_type='application/json',
-	retry_params=writeRetryParams)
-	gcs_file.write(geoJSON)
-	gcs_file.close()
+	blob = BUCKET.blob(filename)
+	blob.upload_from_string(
+        data=json.dumps(geoJSON),
+        content_type='application/json'
+        )
+	result = filename + ' upload complete'
+	return {'response' : result}
 
 """ **** Remove this line and the quotes here and at the bottom of this block to also use Carto ***
 def writeSQLError(sql,filename):
-	gcs_file = gcs.open(filename,
-	'w',
-	content_type='text/html',
-	retry_params=writeRetryParams)
-	gcs_file.write(sql)
-	gcs_file.close()
+	blob = BUCKET.blob(filename)
+	blob.upload_from_string(
+        data=sql,
+        content_type='text/html'
+        )
 """
-
-app = webapp2.WSGIApplication([
-    ('/newCase/', newCase),
-    ('/3ee3bbba-ccd4-4684-b211-19500c0ab25b/', updateCaseStudies)
-    ], debug=True)

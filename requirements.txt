@@ -1,3 +1,7 @@
 GoogleAppEngineCloudStorageClient
 google-cloud-bigquery
 unidecode
+Flask==2.0.2
+gunicorn==20.1.0
+appengine-python-standard>=0.3.1
+google-cloud-storage
