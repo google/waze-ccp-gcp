@@ -104,7 +104,11 @@ From the terminal, change directories to where you cloned the source code.
 
 ###### 3. Using gcloud, Deploy your Application:
 
+Deploy the main application:
 ```gcloud app deploy {your-app-folder}/app.yaml```
+
+Then start the cron job:
+```gcloud app deploy {your-app-folder}/cron.yaml```
 
 ###### 4. Secure your Application with Identity Aware Proxy:
 Even though you generated a GUID to serve as the URL path that AppEngine's Cron accesses to cause a data update, someone could discover it and maliciously hit that URL, and, they could also hit the /newCase/ endpoint. In order to prevent unwanted use of these URLs, you will enable IAP and lock down access to the application only to approved users (or just you). 
@@ -133,10 +137,7 @@ To confirm the Case Study was created, you can visit Datastore and confirm the E
   <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/10.png" width="8600px"/>
 </p>
 
-Start the cron job:
-```gcloud app deploy {your-app-folder}/cron.yaml```
-
-Within 10 minutes, the Cron job described in cron.yaml will call https://{project-id}.appspot.com/{guid}/ and will start populating the tables in BigQuery. *Note - the cron function of AppEngine is internal so it is automatically inscope for IAP purposes. 
+The Cron job described in cron.yaml will call https://{project-id}.appspot.com/{guid}/ and will start populating the tables in BigQuery. *Note - the cron function of AppEngine is internal so it is automatically inscope for IAP purposes. 
 
 ##### Step 7. Investigating the Waze Data
 ###### BigQuery:
