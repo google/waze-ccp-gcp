@@ -120,8 +120,6 @@ Deploy the main application:
 Then start the cron job:
 ```gcloud app deploy {your-app-folder}/cron.yaml```
 
-Visit https://{project-id}.appspot.com/newCase/ to initiate a case (be careful to just do this once)
-
 ###### 4. Secure your Application with Identity Aware Proxy:
 Even though you generated a GUID to serve as the URL path that AppEngine's Cron accesses to cause a data update, someone could discover it and maliciously hit that URL, and, they could also hit the /newCase/ endpoint. In order to prevent unwanted use of these URLs, you will enable IAP and lock down access to the application only to approved users (or just you). 
 
@@ -146,6 +144,8 @@ To confirm the Case Study was created, you can visit Datastore and confirm the E
 <p align="center">
   <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/10.png" width="8600px"/>
 </p>
+
+NOTE: If you see no entries in Datastore, you can manually set off the case creation by visiting https://{project-id}.appspot.com/newCase/ to initiate a case (be careful to just do this once)
 
 The Cron job described in cron.yaml will call https://{project-id}.appspot.com/{guid}/ and will start populating the tables in BigQuery. *Note - the cron function of AppEngine is internal so it is automatically inscope for IAP purposes. 
 
