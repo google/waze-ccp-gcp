@@ -81,8 +81,8 @@ First, generate a [GUID](https://www.guidgenerator.com/). This will be referred 
   - Line 46: Change **{bqDataset}** to your **{bqDataset}**
   -  Line 336: Change **{guid}** to your **{guid}**
 
-###### 3. Install Dependencies to /lib folder: 
-This application utilizes Google-provided Python libraries that are not part of AppEngine Standard, but are easily installed using the vendor library method. Becaue these libraries update frequently and themselves install additional dependencies, you will use the requirements.txt file provided and pip to install them. 
+###### 3. Check dependencies: 
+This application utilizes various Python libraries, and App Engine will use the requirements.txt file during the build. You are free to check the versions and update accordingly. 
 
 From the terminal, change directories to where you cloned the source code. 
 ``` cd {your-app-folder} ```
