@@ -29,7 +29,7 @@ app = Flask(__name__)
 app.wsgi_app = google.appengine.api.wrap_wsgi_app(app.wsgi_app)
 
 # Your Waze CCP URL
-wazeURL= 'https://na-georss.waze.com/rtserver/web/TGeoRSS?tk=ccp_partner&ccp_partner_name=GCCT&format=JSON&types=traffic,alerts,irregularities&polygon=-83.81218750617673,36.614149187960024;-78.23113281867673,39.739665809530905;-74.97917969367673,38.04673866241326;-75.63835938117673,36.43757964751592;-83.81218750617673,36.614149187960024'
+wazeURL= '{waze-url}'
 
 """ **** Remove this line and the quotes here and at the bottom of this block if using Carto ***
 cartoURLBase = 'https://{your-carto-server}/user/{your-user}/api/v2/sql?'
@@ -37,13 +37,13 @@ cartoAPIKey = '{your-carto-api-key}'
 """
 
 #GCS Params
-bucket_name = 'waze_dmv_6'
+bucket_name = '{gcsBucket}'
 gcs = storage.Client()
 BUCKET = gcs.get_bucket(bucket_name)
 gcsPath = '/'+ bucket_name +'/'
 
 #BigQuery Params
-bqDataset = 'waze_dmv_6'
+bqDataset = '{bqDataset}'
 
 #BigQuery Schemas for the three tables that need to be recreated.
 #These are also referenced with each write.
@@ -333,7 +333,7 @@ def newCase():
 
 #Called at your set cron interval, this function loops through all the cases in datastore
 #And adds a task to update the case's tables in Taskqeue
-@app.route('/3ee3bbba-ccd4-4684-b211-19500c0ab25b/', methods=['GET'])
+@app.route('/{guid}/', methods=['GET'])
 def updateCaseStudies():
 	caseStudies = caseModel.query()
 	for case in caseStudies:

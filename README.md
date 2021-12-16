@@ -73,15 +73,13 @@ From here on out, we'll refer to your Bucket as **{gcsPath}**
 ###### 2. Update Variables Source Code: 
 First, generate a [GUID](https://www.guidgenerator.com/). This will be referred to as **{guid}** and its just a way to create a non-guessable URL for the handler that Cron will call to update the Waze data every 10 minutes. 
 
-- In app.yaml 
-  - Line 37: Change **{guid}** to your **{guid}** 
 - In cron.yaml 
   - Line 17: Change **{guid}** to your **{guid}**
 - In main.py
-  - Line 29: Change **{waze-url}** to your Waze CCP URL
-  - Line 38: Change **{gcsPath}** to your **{gcsPath}** 
-  - Line 41: Change **{bqDataset}** to your **{bqDataset}**
-  -  Line 873: Change **{guid}** to your **{guid}**
+  - Line 32: Change **{waze-url}** to your Waze CCP URL
+  - Line 40: Change **{gcsBucket}** to your **{gcsBucket}** 
+  - Line 46: Change **{bqDataset}** to your **{bqDataset}**
+  -  Line 336: Change **{guid}** to your **{guid}**
 
 ###### 3. Install Dependencies to /lib folder: 
 This application utilizes Google-provided Python libraries that are not part of AppEngine Standard, but are easily installed using the vendor library method. Becaue these libraries update frequently and themselves install additional dependencies, you will use the requirements.txt file provided and pip to install them. 
