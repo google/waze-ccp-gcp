@@ -12,29 +12,13 @@
 #See the License for the specific language governing permissions and
 # under the License.
 
-runtime: python27
-api_version: 1
-threadsafe: yes
-instance_class: F4
+runtime: python39
 
-libraries:
-- name: ssl
-  version: latest
+app_engine_apis: true
 
-default_expiration: "1s"
+entrypoint: gunicorn -b :$PORT main:app
 
-env_variables:
-    GAE_USE_SOCKETS_HTTPLIB : 'true'
+default_expiration: "300s"
 
-handlers:
-
-- url: /newCase/
-  script: main.app
-  secure: always
-
-- url: /{guid}/
-  script: main.app
-  secure: always
-
-builtins:
-- deferred: on
+inbound_services:
+- warmup

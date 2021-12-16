@@ -73,24 +73,20 @@ From here on out, we'll refer to your Bucket as **{gcsPath}**
 ###### 2. Update Variables Source Code: 
 First, generate a [GUID](https://www.guidgenerator.com/). This will be referred to as **{guid}** and its just a way to create a non-guessable URL for the handler that Cron will call to update the Waze data every 10 minutes. 
 
-- In app.yaml 
-  - Line 37: Change **{guid}** to your **{guid}** 
 - In cron.yaml 
   - Line 17: Change **{guid}** to your **{guid}**
 - In main.py
-  - Line 29: Change **{waze-url}** to your Waze CCP URL
-  - Line 38: Change **{gcsPath}** to your **{gcsPath}** 
-  - Line 41: Change **{bqDataset}** to your **{bqDataset}**
-  -  Line 873: Change **{guid}** to your **{guid}**
+  - Line 32: Change **{waze-url}** to your Waze CCP URL
+  - Line 40: Change **{gcsBucket}** to your **{gcsBucket}** 
+  - Line 46: Change **{bqDataset}** to your **{bqDataset}**
+  -  Line 336: Change **{guid}** to your **{guid}**
 
 ###### 3. Install Dependencies to /lib folder: 
 This application utilizes Google-provided Python libraries that are not part of AppEngine Standard, but are easily installed using the vendor library method. Becaue these libraries update frequently and themselves install additional dependencies, you will use the requirements.txt file provided and pip to install them. 
 
 From the terminal, change directories to where you cloned the source code. 
 ``` cd {your-app-folder} ```
-Next, use pip to install the required libraries to the /lib folder. 
-``` pip install -r requirements.txt -t lib/ ```
-The special file "appengine_config.py" uses the Vendor library to include any dependencies located in the /lib folder.
+
 
 ##### Step 5. Deploy your Application to AppEngine
 
@@ -104,9 +100,27 @@ The special file "appengine_config.py" uses the Vendor library to include any de
   <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/9.png" width="600px"/>
 </p>
 
-###### 3. Using gcloud, Deploy your Application:
+For the next step, you'll need to go to the [Cloud Build settings page](https://console.cloud.google.com/cloud-build/settings/service-account). 
 
-```gcloud app deploy {your-app-folder}/app.yaml```
+<p align="center">
+  <img src="https://storage.googleapis.com/waze_ccp_github/Screen%20Shot%202021-12-16%20at%201.20.48%20AM.png" width="600px"/>
+</p>
+
+This will trigger a second prompt to enable the App Engine Admin API.
+
+<p align="center">
+  <img src="https://storage.googleapis.com/waze_ccp_github/Screen%20Shot%202021-12-16%20at%201.21.45%20AM.png" width="600px"/>
+</p>
+
+###### 3. Using gcloud, Deploy your Application and Create a Case:
+
+Deploy the main application:
+```gcloud beta app deploy {your-app-folder}/app.yaml```
+
+Then start the cron job:
+```gcloud app deploy {your-app-folder}/cron.yaml```
+
+Visit https://{project-id}.appspot.com/newCase/ to initiate a case (be careful to just do this once)
 
 ###### 4. Secure your Application with Identity Aware Proxy:
 Even though you generated a GUID to serve as the URL path that AppEngine's Cron accesses to cause a data update, someone could discover it and maliciously hit that URL, and, they could also hit the /newCase/ endpoint. In order to prevent unwanted use of these URLs, you will enable IAP and lock down access to the application only to approved users (or just you). 
@@ -128,17 +142,12 @@ You can verify that IAP is working by visiting https://{project-id}.appspot.com 
 
 ##### Step 6. Create your New Case Study
 
-Simply visit https://{project-id}.appspot.com/newCase/?name={your-case-name} 
-You should just see a blank page rendered, and no 500 errors if everything worked correctly. 
 To confirm the Case Study was created, you can visit Datastore and confirm the Entity you expect to see is there. 
 <p align="center">
   <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/10.png" width="8600px"/>
 </p>
 
-Start the cron job:
-```gcloud app deploy {your-app-folder}/cron.yaml```
-
-Within 10 minutes, the Cron job described in cron.yaml will call https://{project-id}.appspot.com/{guid}/ and will start populating the tables in BigQuery. *Note - the cron function of AppEngine is internal so it is automatically inscope for IAP purposes. 
+The Cron job described in cron.yaml will call https://{project-id}.appspot.com/{guid}/ and will start populating the tables in BigQuery. *Note - the cron function of AppEngine is internal so it is automatically inscope for IAP purposes. 
 
 ##### Step 7. Investigating the Waze Data
 ###### BigQuery:
