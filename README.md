@@ -140,12 +140,12 @@ You can verify that IAP is working by visiting https://{project-id}.appspot.com 
 
 ##### Step 6. Create your New Case Study
 
+Visit https://{project-id}.appspot.com/newCase/{case-name} to initiate a case, where {case-name} is any name you create for your case (like "Miami" in the example screenshot below). Be careful to just do this once per case you want to create.
+
 To confirm the Case Study was created, you can visit Datastore and confirm the Entity you expect to see is there. 
 <p align="center">
   <img src="https://storage.googleapis.com/waze-ccp-gcp-os/readmeimages/10.png" width="8600px"/>
 </p>
-
-NOTE: If you see no entries in Datastore, you can manually set off the case creation by visiting https://{project-id}.appspot.com/newCase/ to initiate a case (be careful to just do this once)
 
 The Cron job described in cron.yaml will call https://{project-id}.appspot.com/{guid}/ and will start populating the tables in BigQuery. *Note - the cron function of AppEngine is internal so it is automatically inscope for IAP purposes. 
 
