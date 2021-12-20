@@ -15,4 +15,4 @@
 cron:
 - description: "Refresh Case Studies"
   url: /{guid}/
-  schedule: every 10 minutes
+  schedule: every 2 minutes
