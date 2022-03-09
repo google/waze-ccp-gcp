@@ -103,13 +103,13 @@ From the terminal, change directories to where you cloned the source code.
 For the next step, you'll need to go to the [Cloud Build settings page](https://console.cloud.google.com/cloud-build/settings/service-account). 
 
 <p align="center">
-  <img src="https://storage.googleapis.com/waze_ccp_github/Screen%20Shot%202021-12-16%20at%201.20.48%20AM.png" width="600px"/>
+  <img src="https://github.com/WandLZhang/waze-ccp-gcp/blob/master/img/waze-ccp-1.png?raw=true" width="600px"/>
 </p>
 
 This will trigger a second prompt to enable the App Engine Admin API.
 
 <p align="center">
-  <img src="https://storage.googleapis.com/waze_ccp_github/Screen%20Shot%202021-12-16%20at%201.21.45%20AM.png" width="600px"/>
+  <img src="https://github.com/WandLZhang/waze-ccp-gcp/blob/master/img/waze-ccp-2.png?raw=true" width="600px"/>
 </p>
 
 ###### 3. Using gcloud, Deploy your Application and Create a Case:
